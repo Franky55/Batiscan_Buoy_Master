@@ -19,6 +19,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_NeoPixel.h>
 #include "main.h"
+#include "Globals.h"
 
 // inlcude des pilotes
 
