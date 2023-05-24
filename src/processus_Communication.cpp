@@ -102,17 +102,21 @@ void Processus_Communication_Read()
     // }
     // Serial.println("");
 
-    if(processus_WIFI.tabReceived[1] == 'N')
+    if(processus_WIFI.tabReceived[1] == 'R')
     {
-        interface_NEOPIXEL_allume(10,10,10);
+        interface_NEOPIXEL_allume(255, 0, 0);
         //interface_WIFI_eteint();
     }
-    if(processus_WIFI.tabReceived[1] == 'F')
+    if(processus_WIFI.tabReceived[1] == 'G')
     {
-        interface_NEOPIXEL_eteint();
+        interface_NEOPIXEL_allume(0, 255, 0);
         //interface_WIFI_eteint();
     }
-    //interface_WIFI_eteint();
+    if(processus_WIFI.tabReceived[1] == 'B')
+    {
+        interface_NEOPIXEL_allume(0, 0, 255);
+        //interface_WIFI_eteint();
+    }
     
     serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_SPI;
 
@@ -122,8 +126,21 @@ void Processus_Communication_Read()
 void Processus_Communication_Send()
 {
     processus_WIFI.DataToSend = 0;//data has been sent
+    unsigned char bufferTest[255];
 
-    interface_WIFI_Send(interface_SPI_Master_Struct.Received_SPI, interface_SPI_Master_Struct.Size);
+    bufferTest[0] = 2;
+    bufferTest[1] = 0;
+    bufferTest[2] = 1;
+    bufferTest[3] = 0;
+    bufferTest[4] = 0;
+    bufferTest[5] = 255;
+    bufferTest[6] = 3;
+    bufferTest[7] = 255;
+
+
+
+    interface_WIFI_Send(bufferTest, 8);
+    //interface_WIFI_Send(interface_SPI_Master_Struct.Received_SPI, interface_SPI_Master_Struct.Size);
 
     serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Check_State;
 
@@ -132,12 +149,7 @@ void Processus_Communication_Send()
 
 void Processus_Communication_SPI()
 {
-    // compt++;
-    // if(compt < 1000)
-    // {
-    //     return;
-    // }
-    // compt = 0;
+    
     const unsigned char data[255] = "";
     // Serial.println("SPI data sending");
     // Serial.print("Processus_Communication_SPI: processus_WIFI.tabReceived: ");
@@ -148,7 +160,14 @@ void Processus_Communication_SPI()
     // }
     // Serial.println("");
     //interface_SPI_MASTER_Transaction((unsigned char*)"dat", (unsigned char*)processus_WIFI.tabReceived, 3);
-    interface_SPI_MASTER_Transaction((unsigned char*)processus_WIFI.tabReceived, (unsigned char*)data, processus_WIFI.DataToSendSPI);
+    interface_SPI_MASTER_Transaction((unsigned char*)processus_WIFI.tabReceived, (unsigned char*)data, 4);
+
+    // compt++;
+    // if(compt < 10)
+    // {
+    //     return;
+    // }
+    // compt = 0;
     processus_WIFI.DataToRead = 0;//data has been read
     serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Send;
 }

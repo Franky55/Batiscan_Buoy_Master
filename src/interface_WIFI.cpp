@@ -7,7 +7,7 @@
 #include "interface_WIFI.h"
 
 
-#define UDP_PORT 4210
+#define UDP_PORT_RECEIVE 4210
 
 // UDP
 WiFiUDP UDP;
@@ -16,7 +16,7 @@ char reply[] = "Packet received!";
 
 // WiFiServer server(80);
 // WiFiClient client;
-IPAddress local_ip(192, 168, 4, 4);
+IPAddress local_ip(192, 168, 4, 2);
 IPAddress gateway(192, 168, 4, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress myIP;
@@ -44,9 +44,9 @@ int interface_WIFI_initialise()
   Serial.println(myIP);
 
   // Begin listening to UDP port
-  UDP.begin(UDP_PORT);
+  UDP.begin(UDP_PORT_RECEIVE);
   Serial.print("Listening on UDP port ");
-  Serial.println(UDP_PORT);
+  Serial.println(UDP_PORT_RECEIVE);
 
 
   return 0;
@@ -110,13 +110,18 @@ int interface_WIFI_Read(unsigned char * packet, int length)
     {
       packet[len] = '\0';
     }
-    // Serial.print("Packet received: ");
 
-    // for(int i = 0; i < len; i++)
-    // {
-    //     Serial.print((char)packet[i]);
-    // }
-    // Serial.println("");
+
+
+
+    Serial.print("Packet received: ");
+
+    for(int i = 0; i < len; i++)
+    {
+        Serial.print(packet[i]);
+        Serial.print(", ");
+    }
+    Serial.println("");
 
     return len;
 }
@@ -125,17 +130,29 @@ int interface_WIFI_Read(unsigned char * packet, int length)
 int interface_WIFI_Send(unsigned char * packet, int length)
 {
         // Send return packet
-    Serial.print("UDP.remoteIP(): ");
-    Serial.println(UDP.remoteIP());
+    //Serial.print("UDP.remoteIP(): ");
+    //Serial.println(UDP.remoteIP());
 
-    Serial.print("UDP.remotePort(): ");
-    Serial.println(UDP.remotePort());
+    //Serial.print("UDP.remotePort(): ");
+    //Serial.println(UDP.remotePort());
 
 
-    Serial.print("myIP: ");
-    Serial.println(myIP);
+    //Serial.print("myIP: ");
+    //Serial.println(myIP);
 
-    UDP.beginPacket(UDP.remoteIP(), UDP.remotePort());
+    UDP.beginPacket(UDP.remoteIP(), 4211);
+    Serial.print("Sending packet to ");
+    Serial.print(UDP.remoteIP());
+    Serial.print(" on port ");
+    Serial.print(4211);
+    Serial.print(": ");
+
+    for(int byte = 0; byte < length; byte++)
+    {
+        Serial.print((char)packet[byte]);
+    }
+    Serial.println("");
+
     UDP.write(packet, length);
     UDP.endPacket();
 
