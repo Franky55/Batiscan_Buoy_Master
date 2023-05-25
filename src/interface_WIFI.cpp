@@ -145,17 +145,20 @@ int interface_WIFI_Send(unsigned char * packet, int length)
     Serial.print(UDP.remoteIP());
     Serial.print(" on port ");
     Serial.print(4211);
-    Serial.print(": ");
+    Serial.print(":  size: ");
+    Serial.print(length);
+    Serial.print("\n\n");
 
     for(int byte = 0; byte < length; byte++)
     {
-        Serial.print((char)packet[byte]);
+        Serial.print(packet[byte]);
+        Serial.print(", ");
     }
     Serial.println("");
 
     UDP.write(packet, length);
     UDP.endPacket();
-
+    Serial.println("Sent :)");
     return 0;
 }
 

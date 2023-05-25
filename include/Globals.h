@@ -29,19 +29,19 @@
 
 #include <iostream>
 #include <cstring>
+#include <Adafruit_NeoPixel.h>
 #include <Arduino.h>
+#include "main.h"
+
 
 #include "Enums.h"
+
 #include "Device.h"
 #include "BFIO.h"
 #include "Chunk.h"
 #include "Data.h"
 #include "Packet.h"
-#include "Terminal.h"
-#include "Gates.h"
-#include "Runway.h"
 
-#include "main.h"
 
 ///@brief RGB LED uses GPIO 48
 #define RGB_PIN 38
@@ -69,6 +69,30 @@
 #define CLOCK_PERIOD_MS 1
 
 #pragma region --- Indicators
+/** 
+ * @brief Hardware handling class that
+ * directly handles the WS2812 RGB
+ * LEDs. This is used by the RGB class. 
+ */
+
+/**
+ * @brief Interface allowing easy
+ * handling of colors and modes of the
+ * WS2812 addressable RGB LEDs without
+ * having to manually deal with the
+ * Adafruit hardware handling class.
+ */
+
+#pragma endregion
+#pragma region --- Controls ---
+/**
+ * @brief Class allowing easy readings
+ * and interfacing of Gamepad's
+ * left joystick.
+ * This is a timebase class and must have
+ * its update called periodically.
+ */
+
 
 
 #pragma endregion
@@ -80,7 +104,7 @@
  * classes and functions. It is used to set
  * modes and take global actions.
  */
-cDevice Device;
+extern cDevice Device;
 
 /**
  * @brief Global object which can be accessed
@@ -90,7 +114,7 @@ cDevice Device;
  * class's details such as its members and
  * methods.
  */
-cChunk Chunk;
+extern cChunk Chunk;
 
 /**
  * @brief Global object which can be accessed
@@ -99,7 +123,7 @@ cChunk Chunk;
  * to arrays of bytes and vise versa to be used
  * through the BFIO protocol.
  */
-cData Data;
+extern cData Data;
 
 /**
  * @brief Global object which can be accessed
@@ -109,7 +133,7 @@ cData Data;
  * it creates and gets informations from planes.
  * 
  */
-cPacket Packet;
+extern cPacket Packet;
 #pragma endregion
 #pragma region --- Terminals ---
 /**
@@ -117,27 +141,26 @@ cPacket Packet;
  * Handles taxiways and runways required to
  * ask the other device functions and read
  * its answers.
- */
-cTerminal MasterTerminal;
+*/
 
 /**
  * @brief The slave terminal of the device.
  * Handles taxiways and provides answers
  * to the other device's function requests.
  */
-cTerminal SlaveTerminal;
+
 #pragma endregion
 #pragma region --- Runways ---
 /**
  * @brief The runway used for the
  * master terminal's departure
  */
-cDepartureRunway MasterDepartureRunway;
+
 /**
  * @brief The runway used for the
  * slave terminal's departure.
  */
-cDepartureRunway SlaveDepartureRunway;
+
 #pragma endregion
 #pragma region --- Gates ---
 /**
@@ -149,13 +172,31 @@ cDepartureRunway SlaveDepartureRunway;
  * This mandatory BFIO gate is used to
  * handle the ping functions both ways.
  */
-cGate_Ping Gate_Ping;
+
 #pragma endregion
 
 #pragma region Functions
+/**
+ * @brief Function that initializes and
+ * builds the classes defined in the
+ * section above. Call this as the
+ * very first thing in your program.
+ * @return Execution:
+ * See definition for potential values.
+ */
 
 
+Execution InitializeProject();
 
+/**
+ * @brief Function that tests if the
+ * initialization done when calling
+ * @ref InitializeProject 
+ * was successful.
+ * 
+ * @return Execution
+ */
+Execution TestInitialization();
 
 #pragma endregion
 

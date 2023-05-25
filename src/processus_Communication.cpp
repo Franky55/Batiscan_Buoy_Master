@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "interface_WIFI.h"
 #include "interface_SPI_Master.h"
+#include "Service_Protocole_BFIO.h"
 #include "Processus_Communication.h"
 
 // if udp:         https://gist.github.com/santolucito/70ecb94ce297eb1b8b8034f78683447b
@@ -31,7 +32,7 @@ int Processus_Communication_initialise(void)
     processus_WIFI.DataToRead = 0;
     processus_WIFI.DataToSend = 0;
     interface_NEOPIXEL_allume(0, 0, 100);
-    serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_SPI;
+    serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Check_State;
     return 0;
 }
 
@@ -74,10 +75,8 @@ void Processus_Communication_Check_State()
     processus_WIFI.DataToRead = interface_WIFI_Data_Available();
     if(processus_WIFI.DataToRead > 0)
     {
-
-        // Serial.println("Data available");
-
         serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Read;
+        processus_WIFI.DataToSend = 1;
         return;
     }
 
@@ -125,21 +124,27 @@ void Processus_Communication_Read()
 
 void Processus_Communication_Send()
 {
+    int size = 0;
+    unsigned char bufferTestSend[300];
+
+    service_Protocole_BFIO_Setup_Answer(7, bufferTestSend, &size);
+
+    interface_WIFI_Send(bufferTestSend, size);
     processus_WIFI.DataToSend = 0;//data has been sent
-    unsigned char bufferTest[255];
+    // unsigned char bufferTest[255];
 
-    bufferTest[0] = 2;
-    bufferTest[1] = 0;
-    bufferTest[2] = 1;
-    bufferTest[3] = 0;
-    bufferTest[4] = 0;
-    bufferTest[5] = 255;
-    bufferTest[6] = 3;
-    bufferTest[7] = 255;
+    // bufferTest[0] = 2;
+    // bufferTest[1] = 0;
+    // bufferTest[2] = 1;
+    // bufferTest[3] = 0;
+    // bufferTest[4] = 0;
+    // bufferTest[5] = 255;
+    // bufferTest[6] = 3;
+    // bufferTest[7] = 255;
 
 
 
-    interface_WIFI_Send(bufferTest, 8);
+    // interface_WIFI_Send(bufferTest, 8);
     //interface_WIFI_Send(interface_SPI_Master_Struct.Received_SPI, interface_SPI_Master_Struct.Size);
 
     serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Check_State;
@@ -169,5 +174,5 @@ void Processus_Communication_SPI()
     // }
     // compt = 0;
     processus_WIFI.DataToRead = 0;//data has been read
-    serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Send;
+    serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Check_State;
 }

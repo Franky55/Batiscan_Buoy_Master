@@ -34,6 +34,7 @@ Execution cDevice::GetStatus(int* statusPointer)
 
 Execution cDevice::SetStatus(int newStatus)
 {
+    _status = newStatus;
     switch(newStatus)
     {
         case(Status::Available):

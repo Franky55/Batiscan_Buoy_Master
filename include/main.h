@@ -59,7 +59,17 @@
 #define GPIO10 10
 #define GPIO10_TEMPS_POUR_RESET_EN_MS 5000
 
+/***  DÉFINITION POUR Service protocole BFIO (Function ID)  ***/
 
+#define UPDATELIGHTS 20
+#define UDPDATE_SERVOS 21
+#define UPDATE_MOTORS 22
+#define UPDATE_CAMERA 23
+#define GET_ALL_STATES 24
+#define GET_ALL_SENSORS 25
+#define UPDATE_NAVIGATION 26
+#define SET_BALLAST 27
+#define SURFACE 28
 
 
 

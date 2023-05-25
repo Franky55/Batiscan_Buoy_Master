@@ -21,6 +21,7 @@
 #include "main.h"
 #include "Globals.h"
 
+
 // inlcude des pilotes
 
 
@@ -32,6 +33,7 @@
 // Include des Services
 #include "serviceTaskServer.h"
 #include "serviceBaseDeTemps.h"
+#include "Service_Protocole_BFIO.h"
 
 // Inlude des interfaces
 #include "interface_NEOPIXEL.h"
@@ -46,25 +48,95 @@
 //Definitions privees
 //pas de definitions privees
 //#include <Adafruit_NeoPixel.h>
+cDevice Device;
+cChunk Chunk;
+cData Data;
+cPacket Packet;
 
 
+unsigned char supportedBFIOIDs[_AMOUNT_OF_SUPPORTED_ID] = {
+    0, // [MANDATORY]  - Ping(None)
+    1, // [MANDATORY]  - Status (Get)
+    2, // [MANDATORY]  - Handshake
+    3, // [MANDATORY]  - ErrorMessage
+    4, // [MANDATORY]  - Device Type
+    5, // [MANDATORY]  - ID
+    6, // [MANDATORY]  - RESTART PROTOCOL
+    7, // [MANDATORY]  - GetUniversalInfos
+    8, // [MANDATORY]  - HandlingError
+    9, // [MANDATORY]  - RESERVED
+    10, // [MANDATORY] - RESERVED
 
+    20, // [SPECIFIC] -TX: 0 -RX: 0 - ResetInputs(None)                                                     -> None
+    21, // [SPECIFIC] -TX: 1 -RX: 1 - Joystick(unsigned char JoystickID)                                    -> char X, char Y, bool button
+    22, // [SPECIFIC] -TX: 2 -RX: 1 - JoystickAxis(unsigned char Joystick_ID, unsigned char AxisID)         -> char AxisValue
+    23, // [SPECIFIC] -TX: 6 -RX: 6 - Joysticks(char X, char Y, char X, char Y, bool left, bool right)      -> char X, char Y, char X, char Y, bool left, bool right
+    24, // [SPECIFIC] -TX: 2 -RX: 1 - Trim(unsigned char JoystickID, unsigned char AxisID)                  -> char Trim
+    25, // [SPECIFIC] -TX: 2 -RX: 1 - Deadzone(unsigned char JoystickID, unsigned char AxisID)              -> char Deadzone
+    26, // [SPECIFIC] -TX: 1 -RX: 1 - Button(unsigned char ButtonID)                                        -> unsigned char buttonState
+    27, // [SPECIFIC] -TX: 5 -RX: 5 - Buttons(uc ButtonA, uc ButtonB, uc ButtonC, uc ButtonD, uc ButtonE)   -> uc ButtonA, uc ButtonB, uc ButtonC, uc ButtonD, uc ButtonE
+    28 // [SPECIFIC] -TX: 3 -RX: 3 - RGB(uc Red, uc Green, uc Blue)                                        -> uc Red, uc Green, uc Blue
+};
 
 /// @brief Fonction qui fait l'initialisation de tout les modules permettant
 //   au fonctionnement global du véhicule.
 /// @param void
 void main_initialise(void);
+// Execution InitializeProject();
+// Execution TestInitialization();
 
 //Definitions de variables privees:
 //pas de variables privees
 
 //Definitions de fonctions privees:
+Execution InitializeProject()
+{
+    Device = cDevice();
+    Chunk = cChunk();
+    Data = cData();
+    Packet = cPacket();
+
+    return Execution::Passed;
+}
+
+Execution TestInitialization()
+{
+    Serial.println("Project test: -> START");
+
+  
+
+    if(!Device.built){
+        Serial.println("Project test: -> DEVICE OBJECT FAIL");
+        return Execution::Failed;
+    }
+
+    if(!Chunk.built){
+        Serial.println("Project test: -> CHUNK OBJECT FAIL");
+        return Execution::Failed;
+    }
+
+    if(!Data.built){
+        Serial.println("Project test: -> DATA OBJECT FAIL");
+        return Execution::Failed;
+    }
+
+    if(!Packet.built){
+      Serial.println("Project test: -> PACKET OBJECT FAIL");
+      return Execution::Failed;
+    }
+
+
+    Serial.println("Project test: -> SUCCESS");
+    return Execution::Passed;
+}
+
 
 void main_initialise(void)
 {
   serviceTaskServer_initialise();
   serviceBaseDeTemps_initialise();
 
+  InitializeProject();
 
   pilote_NEOPIXEL_initialise(); 
   pilote_GPIO_Initialise();
@@ -74,6 +146,9 @@ void main_initialise(void)
   interface_WIFI_initialise();
   interface_SPI_MASTER_initialise();
   interface_GPIO_Initialise();
+
+  //Service
+  service_Protocole_BFIO_initialise();
 
   //processusClignotant_initialise();
   Processus_Communication_initialise();

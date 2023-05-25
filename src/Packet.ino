@@ -287,11 +287,11 @@ Execution cPacket::AppendSegments(unsigned short* FirstSegment, int sizeOfFirstS
 {
     Execution execution;
 
-    if(*sizeOfResult < (sizeOfFirstSegment + sizeOfSecondSegment))
-    {
-        Device.SetErrorMessage("287:Packet: Buffer too small  ");
-        return Execution::Failed;
-    }
+    // if(*sizeOfResult < (sizeOfFirstSegment + sizeOfSecondSegment))
+    // {
+    //     Device.SetErrorMessage("287:Packet: Buffer too small  ");
+    //     return Execution::Failed;
+    // }
 
     // Serial.println("\n\n\n");
     // Serial.println("[APPENDING]");
@@ -330,6 +330,9 @@ Execution cPacket::AppendSegments(unsigned short* FirstSegment, int sizeOfFirstS
     }
     // Serial.println("RESULT");
     // PrintOutPacket(appendResult, *sizeOfResult);
+
+    *sizeOfResult = sizeOfFirstSegment + sizeOfSecondSegment;
+    
     return Execution::Passed;
 }
 /**
