@@ -15,6 +15,15 @@
 
 Execution service_Protocole_BFIO_Get_Bytes_To_Send(unsigned short* plane, unsigned char* ucplane, int *size);
 Execution service_Protocole_BFIO_Setup_Universal_Answer(unsigned short* plane, int *size);
+Execution service_Protocole_BFIO_Setup_UPDATE_LIGHTS(unsigned short* plane, int *size);
+Execution service_Protocole_BFIO_Setup_UPDATE_CAMERA(unsigned short* plane, int *size);
+Execution service_Protocole_BFIO_Setup_GET_ALL_STATES(unsigned short* plane, int *size);
+Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, int *size);
+Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, int *size);
+Execution service_Protocole_BFIO_Setup_SET_BALLAST(unsigned short* plane, int *size);
+Execution service_Protocole_BFIO_Setup_SURFACE(unsigned short* plane, int *size);
+
+
 int service_Protocole_BFIO_initialise(void);
 
 SERVICE_PROTOCOLE_BFIO Service_Protocole_BFIO_struct;
@@ -216,9 +225,793 @@ Execution service_Protocole_BFIO_Setup_Universal_Answer(unsigned short* plane, i
     resultedPlaneSize = resultedPlaneSize +2;
     *size = resultedPlaneSize;
     Device.SetStatus(Status::Available);
-    interface_NEOPIXEL_allume(50,0,55);
     return Execution::Passed;
 }
+
+
+/**
+ * @brief Fonction qui permet de faire un avion pour repondre a update lights
+ * 
+ * @param plane L'endroit ou je vais mettre l'avion construit
+ * @param size La grosseur de l'avion construit
+ * @return Execution 
+ */
+Execution service_Protocole_BFIO_Setup_UPDATE_LIGHTS(unsigned short* plane, int *size)
+{   
+    Execution execution;
+    unsigned char buffer_Byte_Left_Light[1];
+    unsigned char buffer_Byte_Right_Light[1];
+
+
+    unsigned short buffer_Short_Left_Light[2];
+    unsigned short buffer_Short_Right_Light[2];
+
+
+    unsigned short buffer_Short_To_Send[50];
+    
+
+    int resultedPlaneSize = 100;
+    unsigned char functionID = UPDATE_LIGHTS;
+
+    
+    #pragma region --- CONVERT TO BYTES
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Left_Light_State, buffer_Byte_Left_Light, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Right_Light_State, buffer_Byte_Right_Light, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    
+    #pragma endregion
+    
+    #pragma region --- CONVERT TO SEGMENTS
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Left_Light, buffer_Short_Left_Light, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Right_Light, buffer_Short_Right_Light, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    
+    #pragma endregion
+
+    #pragma region --- APPEND SEGMENTS
+    execution = Packet.AppendSegments(buffer_Short_Left_Light, 2, buffer_Short_Right_Light, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    #pragma endregion
+
+    #pragma region --- CREATE PLANE
+    execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    #pragma endregion
+
+    
+    resultedPlaneSize = resultedPlaneSize +2;
+    *size = resultedPlaneSize;
+    Device.SetStatus(Status::Available);
+    return Execution::Passed;
+}
+
+/**
+ * @brief Fonction qui permet de faire un avion pour repondre a update camera
+ * 
+ * @param plane L'endroit ou je vais mettre l'avion construit
+ * @param size La grosseur de l'avion construit
+ * @return Execution 
+ */
+Execution service_Protocole_BFIO_Setup_UPDATE_CAMERA(unsigned short* plane, int *size)
+{   
+    Execution execution;
+    unsigned char buffer_Byte_Camera_State[1];
+    unsigned char buffer_Byte_Camera_Servo[1];
+
+
+    unsigned short buffer_Short_Camera_State[2];
+    unsigned short buffer_Short_Camera_Servo[2];
+
+
+    unsigned short buffer_Short_To_Send[50];
+    
+
+    int resultedPlaneSize = 100;
+    unsigned char functionID = UPDATE_CAMERA;
+
+    
+    #pragma region --- CONVERT TO BYTES
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Camera_State, buffer_Byte_Camera_State, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Camera_Servo_Angle, buffer_Byte_Camera_Servo, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    
+    #pragma endregion
+    
+    #pragma region --- CONVERT TO SEGMENTS
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Camera_State, buffer_Short_Camera_State, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Camera_Servo, buffer_Short_Camera_Servo, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    
+    #pragma endregion
+
+    #pragma region --- APPEND SEGMENTS
+    execution = Packet.AppendSegments(buffer_Short_Camera_State, 2, buffer_Short_Camera_Servo, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    #pragma endregion
+
+    #pragma region --- CREATE PLANE
+    execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    #pragma endregion
+
+    
+    resultedPlaneSize = resultedPlaneSize +2;
+    *size = resultedPlaneSize;
+    Device.SetStatus(Status::Available);
+    return Execution::Passed;
+}
+
+
+
+/**
+ * @brief Fonction qui permet de faire un avion pour repondre a Get All States
+ * 
+ * @param plane L'endroit ou je vais mettre l'avion construit
+ * @param size La grosseur de l'avion construit
+ * @return Execution 
+ */
+Execution service_Protocole_BFIO_Setup_GET_ALL_STATES(unsigned short* plane, int *size)
+{   
+    Execution execution;
+    unsigned char buffer_Byte_Water_Detected[1];
+    unsigned char buffer_Byte_Camera_State[1];
+    unsigned char buffer_Byte_Low_Battery[1];
+    unsigned char buffer_Byte_Left_Light_State[1];
+    unsigned char buffer_Byte_Right_Light_State[1];
+    unsigned char buffer_Byte_In_Emergency[1];
+    unsigned char buffer_Byte_Ballast[1];
+    unsigned char buffer_Byte_IsCommunicating[1];
+
+
+    unsigned short buffer_Short_Water_Detected[2];
+    unsigned short buffer_Short_Camera_State[2];
+    unsigned short buffer_Short_Low_Battery[2];
+    unsigned short buffer_Short_Left_Light_State[2];
+    unsigned short buffer_Short_Right_Light_State[2];
+    unsigned short buffer_Short_In_Emergency[2];
+    unsigned short buffer_Short_Ballast[2];
+    unsigned short buffer_Short_IsCommunicating[2];
+
+
+    unsigned short buffer_Short_To_Send[100];
+    
+
+    int resultedPlaneSize = 100;
+    unsigned char functionID = GET_ALL_STATES;
+
+    
+    #pragma region --- CONVERT TO BYTES
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Water_Detection, buffer_Byte_Water_Detected, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Camera_State, buffer_Byte_Camera_State, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Low_Battery, buffer_Byte_Low_Battery, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Left_Light_State, buffer_Byte_Left_Light_State, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Right_Light_State, buffer_Byte_Right_Light_State, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.In_Emergency, buffer_Byte_In_Emergency, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Ballast_State, buffer_Byte_Ballast, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Is_Communicating, buffer_Byte_IsCommunicating, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    
+    #pragma endregion
+    
+    #pragma region --- CONVERT TO SEGMENTS
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Water_Detected, buffer_Short_Water_Detected, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Camera_State, buffer_Short_Camera_State, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Low_Battery, buffer_Short_Low_Battery, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Left_Light_State, buffer_Short_Left_Light_State, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Right_Light_State, buffer_Short_Right_Light_State, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_In_Emergency, buffer_Short_In_Emergency, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Ballast, buffer_Short_Ballast, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_IsCommunicating, buffer_Short_IsCommunicating, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    
+    #pragma endregion
+
+    #pragma region --- APPEND SEGMENTS
+    execution = Packet.AppendSegments(buffer_Short_Water_Detected, 2, buffer_Short_Camera_State, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Low_Battery, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Left_Light_State, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Right_Light_State, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_In_Emergency, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Ballast, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_IsCommunicating, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    #pragma endregion
+
+    #pragma region --- CREATE PLANE
+    execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    #pragma endregion
+
+    
+    resultedPlaneSize = resultedPlaneSize +2;
+    *size = resultedPlaneSize;
+    Device.SetStatus(Status::Available);
+    return Execution::Passed;
+}
+
+
+/**
+ * @brief Fonction qui permet de faire un avion pour repondre a Get All Sensors
+ * 
+ * @param plane L'endroit ou je vais mettre l'avion construit
+ * @param size La grosseur de l'avion construit
+ * @return Execution 
+ */
+Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, int *size)
+{   
+    Execution execution;
+    unsigned char buffer_Byte_Pressure[2];
+    unsigned char buffer_Byte_Pitch[1];
+    unsigned char buffer_Byte_Roll[1];
+    unsigned char buffer_Byte_Yaw[1];
+    unsigned char buffer_Byte_Speed[1];
+    unsigned char buffer_Byte_Battery[1];
+
+
+    unsigned short buffer_Short_Pressure[3];
+    unsigned short buffer_Short_Pitch[2];
+    unsigned short buffer_Short_Roll[2];
+    unsigned short buffer_Short_Yaw[2];
+    unsigned short buffer_Short_Speed[2];
+    unsigned short buffer_Short_Battery[2];
+
+
+    unsigned short buffer_Short_To_Send[150];
+    
+
+    int resultedPlaneSize = 100;
+    unsigned char functionID = GET_ALL_SENSORS;
+
+    
+    #pragma region --- CONVERT TO BYTES
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Pressure, buffer_Byte_Pressure, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Pitch, buffer_Byte_Pitch, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Roll, buffer_Byte_Roll, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Yaw, buffer_Byte_Yaw, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Speed, buffer_Byte_Speed, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Battery, buffer_Byte_Battery, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    
+    #pragma endregion
+    
+    #pragma region --- CONVERT TO SEGMENTS
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pressure, buffer_Short_Pressure, 2, 3);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pitch, buffer_Short_Pitch, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Roll, buffer_Short_Roll, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Yaw, buffer_Short_Yaw, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Speed, buffer_Short_Speed, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Battery, buffer_Short_Battery, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    
+    #pragma endregion
+
+    #pragma region --- APPEND SEGMENTS
+    execution = Packet.AppendSegments(buffer_Short_Pressure, 3, buffer_Short_Pitch, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Roll, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Yaw, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Speed, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Battery, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+
+    #pragma endregion
+
+    #pragma region --- CREATE PLANE
+    execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    #pragma endregion
+
+    
+    resultedPlaneSize = resultedPlaneSize +2;
+    *size = resultedPlaneSize;
+    Device.SetStatus(Status::Available);
+    return Execution::Passed;
+}
+
+/**
+ * @brief Fonction qui permet de faire un avion pour repondre a Update Navigation
+ * 
+ * @param plane L'endroit ou je vais mettre l'avion construit
+ * @param size La grosseur de l'avion construit
+ * @return Execution 
+ */
+Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, int *size)
+{   
+    Execution execution;
+    unsigned char buffer_Byte_Pressure[1];
+    unsigned char buffer_Byte_Pitch[1];
+    unsigned char buffer_Byte_Roll[1];
+    unsigned char buffer_Byte_Yaw[1];
+
+
+    unsigned short buffer_Short_Pressure[2];
+    unsigned short buffer_Short_Pitch[2];
+    unsigned short buffer_Short_Roll[2];
+    unsigned short buffer_Short_Yaw[2];
+
+
+    unsigned short buffer_Short_To_Send[150];
+    
+
+    int resultedPlaneSize = 100;
+    unsigned char functionID = UPDATE_NAVIGATION;
+
+    
+    #pragma region --- CONVERT TO BYTES
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Speed, buffer_Byte_Pressure, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Pitch, buffer_Byte_Pitch, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Roll, buffer_Byte_Roll, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Yaw, buffer_Byte_Yaw, 1);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+
+    
+    #pragma endregion
+    
+    #pragma region --- CONVERT TO SEGMENTS
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pressure, buffer_Short_Pressure, 2, 3);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pitch, buffer_Short_Pitch, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Roll, buffer_Short_Roll, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Yaw, buffer_Short_Yaw, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    
+    #pragma endregion
+
+    #pragma region --- APPEND SEGMENTS
+    execution = Packet.AppendSegments(buffer_Short_Pressure, 3, buffer_Short_Pitch, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Roll, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Yaw, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+
+
+    #pragma endregion
+
+    #pragma region --- CREATE PLANE
+    execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    #pragma endregion
+
+    
+    resultedPlaneSize = resultedPlaneSize +2;
+    *size = resultedPlaneSize;
+    Device.SetStatus(Status::Available);
+    return Execution::Passed;
+}
+
+
+/**
+ * @brief Fonction qui permet de faire un avion pour repondre a Set Ballast
+ * 
+ * @param plane L'endroit ou je vais mettre l'avion construit
+ * @param size La grosseur de l'avion construit
+ * @return Execution 
+ */
+Execution service_Protocole_BFIO_Setup_SET_BALLAST(unsigned short* plane, int *size)
+{   
+    Execution execution;
+    unsigned char buffer_Byte_Pressure[1];
+
+    unsigned short buffer_Short_Pressure[2];
+
+
+    unsigned short buffer_Short_To_Send[150];
+    
+
+    int resultedPlaneSize = 100;
+    unsigned char functionID = SET_BALLAST;
+
+    
+    #pragma region --- CONVERT TO BYTES
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Ballast_State, buffer_Byte_Pressure, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    #pragma endregion
+    
+    #pragma region --- CONVERT TO SEGMENTS
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pressure, buffer_Short_Pressure, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+
+    
+    #pragma endregion
+
+    #pragma region --- APPEND SEGMENTS
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, 0, buffer_Short_Pressure, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+
+
+    #pragma endregion
+
+    #pragma region --- CREATE PLANE
+    execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    #pragma endregion
+
+    
+    resultedPlaneSize = resultedPlaneSize +2;
+    *size = resultedPlaneSize;
+    Device.SetStatus(Status::Available);
+    return Execution::Passed;
+}
+
+
+/**
+ * @brief Fonction qui permet de faire un avion pour repondre a Surface
+ * 
+ * @param plane L'endroit ou je vais mettre l'avion construit
+ * @param size La grosseur de l'avion construit
+ * @return Execution 
+ */
+Execution service_Protocole_BFIO_Setup_SURFACE(unsigned short* plane, int *size)
+{   
+    Execution execution;
+    unsigned char buffer_Byte_Pressure[1];
+
+    unsigned short buffer_Short_Pressure[2];
+
+
+    unsigned short buffer_Short_To_Send[150];
+    
+
+    int resultedPlaneSize = 100;
+    unsigned char functionID = SURFACE;
+
+    
+    #pragma region --- CONVERT TO BYTES
+    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Surfacing, buffer_Byte_Pressure, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+    #pragma endregion
+    
+    #pragma region --- CONVERT TO SEGMENTS
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pressure, buffer_Short_Pressure, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+
+    
+    #pragma endregion
+
+    #pragma region --- APPEND SEGMENTS
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, 0, buffer_Short_Pressure, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+
+
+
+    #pragma endregion
+
+    #pragma region --- CREATE PLANE
+    execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    #pragma endregion
+
+    
+    resultedPlaneSize = resultedPlaneSize +2;
+    *size = resultedPlaneSize;
+    Device.SetStatus(Status::Available);
+    return Execution::Passed;
+}
+
 
 
 Execution service_Protocole_BFIO_Get_Bytes_To_Send(unsigned short* plane, unsigned char* ucplane, int *size)
@@ -243,13 +1036,50 @@ void service_Protocole_BFIO_Setup_Answer(int fonctionID, unsigned char* plane, i
     unsigned short usPlane[300];
     switch (fonctionID)
     {
-    case 7:
+    case 7://Universal Answer
         service_Protocole_BFIO_Setup_Universal_Answer(usPlane, size);
-        interface_NEOPIXEL_allume(255,255,255);
-        service_Protocole_BFIO_Get_Bytes_To_Send(usPlane, plane, size);
         break;
+
+    case UPDATE_LIGHTS:
+        service_Protocole_BFIO_Setup_UPDATE_LIGHTS(usPlane, size);
+        break;
+
+    case UPDATE_SERVOS:
+
+        break;
+
+    case UPDATE_MODES:
+
+        break;
+
+    case UPDATE_CAMERA:
+        service_Protocole_BFIO_Setup_UPDATE_CAMERA(usPlane, size);
+        break;
+
+    case GET_ALL_STATES:
+        service_Protocole_BFIO_Setup_GET_ALL_STATES(usPlane, size);
+        break;
+
+    case GET_ALL_SENSORS:
+        service_Protocole_BFIO_Setup_GET_ALL_SENSORS(usPlane, size);
+        break;
+
+    case UPDATE_NAVIGATION:
+        service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(usPlane, size);
+        break;
+
+    case SET_BALLAST:
+        service_Protocole_BFIO_Setup_SET_BALLAST(usPlane, size);
+        break;
+
+    case SURFACE:
+        service_Protocole_BFIO_Setup_SURFACE(usPlane, size);
+        break;
+
     
     default:
         break;
     }
+
+    service_Protocole_BFIO_Get_Bytes_To_Send(usPlane, plane, size);
 }

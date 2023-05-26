@@ -5,11 +5,29 @@
 
 typedef struct
 {
-    unsigned char State;
-    unsigned char tabReceived[255];
-    int DataToRead;
-    int DataToSend;
-    int DataToSendSPI;
+    bool Left_Light_State;
+    bool Right_Light_State;
+
+    bool Camera_State;
+    unsigned char Camera_Servo_Angle;
+
+    bool Water_Detection;
+    bool Low_Battery;
+    bool In_Emergency;
+    bool Ballast_State;
+    bool Is_Communicating;
+
+    int Pressure;
+    signed char Temperature;
+    signed char Pitch;
+    signed char Roll;
+    signed char Yaw;
+
+    signed char Speed;
+    unsigned char Battery;
+
+    bool Surfacing;
+
 }SERVICE_PROTOCOLE_BFIO;
 
 
