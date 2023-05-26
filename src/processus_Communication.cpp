@@ -20,6 +20,8 @@ void Processus_Communication_Send();
 void Processus_Communication_SPI();
 
 PROCESSUS_WIFI processus_WIFI;
+PROCESSUS_COMMUNICATION processus_Communication_Struct_WANTED_Value;
+PROCESSUS_COMMUNICATION processus_Communication_Struct_ACTUAL_Value;
 
 
 int compt = 0;

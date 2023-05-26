@@ -7,8 +7,7 @@
 #include "serviceBaseDeTemps.h"
 
 #include <stdio.h>
-#include "interface_WIFI.h"
-#include "interface_SPI_Master.h"
+#include "Processus_Communication.h"
 
 
 
@@ -24,9 +23,14 @@ Execution service_Protocole_BFIO_Setup_SET_BALLAST(unsigned short* plane, int *s
 Execution service_Protocole_BFIO_Setup_SURFACE(unsigned short* plane, int *size);
 
 
+Execution service_Protocole_BFIO_Received_UPDATE_LIGHTS(unsigned short *plane, int resultedPlaneSize);
+Execution service_Protocole_BFIO_Received_UPDATE_CAMERA(unsigned short *plane, int resultedPlaneSize);
+Execution service_Protocole_BFIO_Received_UPDATE_NAVIGATION(unsigned short *plane, int resultedPlaneSize);
+Execution service_Protocole_BFIO_Received_SET_BALLAST(unsigned short *plane, int resultedPlaneSize);
+Execution service_Protocole_BFIO_Received_SURFACE(unsigned short *plane, int resultedPlaneSize);
+
 int service_Protocole_BFIO_initialise(void);
 
-SERVICE_PROTOCOLE_BFIO Service_Protocole_BFIO_struct;
 
 
 
@@ -255,13 +259,13 @@ Execution service_Protocole_BFIO_Setup_UPDATE_LIGHTS(unsigned short* plane, int 
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Left_Light_State, buffer_Byte_Left_Light, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.union_Bool.bits.Left_Light_State, buffer_Byte_Left_Light, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Right_Light_State, buffer_Byte_Right_Light, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.union_Bool.bits.Right_Light_State, buffer_Byte_Right_Light, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
@@ -334,13 +338,13 @@ Execution service_Protocole_BFIO_Setup_UPDATE_CAMERA(unsigned short* plane, int 
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Camera_State, buffer_Byte_Camera_State, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.union_Bool.bits.Camera_State, buffer_Byte_Camera_State, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Camera_Servo_Angle, buffer_Byte_Camera_Servo, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Camera_Servo_Angle, buffer_Byte_Camera_Servo, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
@@ -427,49 +431,49 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_STATES(unsigned short* plane, int
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Water_Detection, buffer_Byte_Water_Detected, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Water_Detection, buffer_Byte_Water_Detected, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Camera_State, buffer_Byte_Camera_State, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Camera_State, buffer_Byte_Camera_State, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Low_Battery, buffer_Byte_Low_Battery, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Low_Battery, buffer_Byte_Low_Battery, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Left_Light_State, buffer_Byte_Left_Light_State, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Left_Light_State, buffer_Byte_Left_Light_State, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Right_Light_State, buffer_Byte_Right_Light_State, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Right_Light_State, buffer_Byte_Right_Light_State, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.In_Emergency, buffer_Byte_In_Emergency, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.In_Emergency, buffer_Byte_In_Emergency, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Ballast_State, buffer_Byte_Ballast, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Ballast_State, buffer_Byte_Ballast, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Is_Communicating, buffer_Byte_IsCommunicating, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Is_Communicating, buffer_Byte_IsCommunicating, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
@@ -622,37 +626,37 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Pressure, buffer_Byte_Pressure, 2);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Pressure, buffer_Byte_Pressure, 2);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Pitch, buffer_Byte_Pitch, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Pitch, buffer_Byte_Pitch, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Roll, buffer_Byte_Roll, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Roll, buffer_Byte_Roll, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Yaw, buffer_Byte_Yaw, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Yaw, buffer_Byte_Yaw, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Speed, buffer_Byte_Speed, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Speed, buffer_Byte_Speed, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Battery, buffer_Byte_Battery, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Battery, buffer_Byte_Battery, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
@@ -779,25 +783,25 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Speed, buffer_Byte_Pressure, 2);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Speed, buffer_Byte_Pressure, 2);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Pitch, buffer_Byte_Pitch, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Pitch, buffer_Byte_Pitch, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Roll, buffer_Byte_Roll, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Roll, buffer_Byte_Roll, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Yaw, buffer_Byte_Yaw, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Yaw, buffer_Byte_Yaw, 1);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
@@ -896,7 +900,7 @@ Execution service_Protocole_BFIO_Setup_SET_BALLAST(unsigned short* plane, int *s
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Ballast_State, buffer_Byte_Pressure, 2);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.union_Bool.bits.Ballast_State, buffer_Byte_Pressure, 2);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
@@ -966,7 +970,7 @@ Execution service_Protocole_BFIO_Setup_SURFACE(unsigned short* plane, int *size)
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(Service_Protocole_BFIO_struct.Surfacing, buffer_Byte_Pressure, 2);
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.union_Bool.bits.Surfacing, buffer_Byte_Pressure, 2);
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
@@ -1048,7 +1052,7 @@ void service_Protocole_BFIO_Setup_Answer(int fonctionID, unsigned char* plane, i
 
         break;
 
-    case UPDATE_MODES:
+    case UPDATE_MOTORS:
 
         break;
 
@@ -1082,4 +1086,207 @@ void service_Protocole_BFIO_Setup_Answer(int fonctionID, unsigned char* plane, i
     }
 
     service_Protocole_BFIO_Get_Bytes_To_Send(usPlane, plane, size);
+}
+
+
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+//                      Receiver
+
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+
+
+Execution service_Protocole_BFIO_Received_UPDATE_LIGHTS(unsigned short *plane, int resultedPlaneSize)
+{   
+    unsigned char receivedBytes[25];
+    Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Left Light
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Left_Light_State = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+
+
+    execution = Packet.GetBytes(plane, resultedPlaneSize, 2, receivedBytes, 25);//Get Right Light
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Right_Light_State = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+    return Execution::Passed;
+}
+
+
+Execution service_Protocole_BFIO_Received_UPDATE_CAMERA(unsigned short *plane, int resultedPlaneSize)
+{   
+    unsigned char receivedBytes[25];
+    Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Camera state
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Camera_State = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+
+
+    execution = Packet.GetBytes(plane, resultedPlaneSize, 2, receivedBytes, 25);//Get Camera Angle
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.Camera_Servo_Angle = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+    return Execution::Passed;
+}
+
+
+Execution service_Protocole_BFIO_Received_UPDATE_NAVIGATION(unsigned short *plane, int resultedPlaneSize)
+{   
+    unsigned char receivedBytes[25];
+    Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Speed
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.Speed = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+
+
+    execution = Packet.GetBytes(plane, resultedPlaneSize, 2, receivedBytes, 25);//Get Pitch
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.Pitch = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+
+    execution = Packet.GetBytes(plane, resultedPlaneSize, 3, receivedBytes, 25);//Get Roll
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.Roll = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+
+    execution = Packet.GetBytes(plane, resultedPlaneSize, 4, receivedBytes, 25);//Get Yaw
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.Yaw = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+    return Execution::Passed;
+}
+
+
+Execution service_Protocole_BFIO_Received_SET_BALLAST(unsigned short *plane, int resultedPlaneSize)
+{   
+    unsigned char receivedBytes[25];
+    Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Camera state
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Ballast_State = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+
+    return Execution::Passed;
+}
+
+Execution service_Protocole_BFIO_Received_SURFACE(unsigned short *plane, int resultedPlaneSize)
+{   
+    unsigned char receivedBytes[25];
+    Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Camera state
+    if(execution != Execution::Passed)
+    {
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Surfacing = receivedBytes[0];
+    memset(receivedBytes, 0, 25);
+
+    return Execution::Passed;
+}
+
+
+
+void service_Protocole_BFIO_Read_Data(int *fonctionID, unsigned char* tabReceived, int* size)
+{
+    Execution execution;
+    unsigned short plane[300];
+    unsigned char ucFonctionID = 0;
+
+    int resultedPlaneSize = 0;
+    int extractedParameterCount;
+
+    for(int i = 0; i < (*size); i+=2)
+    {
+        plane[i/2] = (unsigned short)(tabReceived[i] << 8) + tabReceived[i+1];
+    }
+
+    execution = Packet.GetID(plane, *size, &ucFonctionID);
+    if(execution != Execution::Passed)
+    {
+        return;
+    }
+
+    execution = Packet.FullyAnalyze(plane, &resultedPlaneSize, &extractedParameterCount, &ucFonctionID);
+
+
+    switch (ucFonctionID)
+    {
+    case 7://Universal Answer
+        //Don't fucking care bitch
+        //just need the ID
+        break;
+
+    case UPDATE_LIGHTS:
+        service_Protocole_BFIO_Received_UPDATE_LIGHTS(plane, resultedPlaneSize);
+        break;
+
+    case UPDATE_SERVOS:
+
+        break;
+
+    case UPDATE_MOTORS:
+
+        break;
+
+    case UPDATE_CAMERA:
+        service_Protocole_BFIO_Received_UPDATE_CAMERA(plane, resultedPlaneSize);
+        break;
+
+    case GET_ALL_STATES:
+        //Just need the function ID
+        break;
+
+    case GET_ALL_SENSORS:
+        //Just need the function ID
+        break;
+
+    case UPDATE_NAVIGATION:
+        service_Protocole_BFIO_Received_UPDATE_NAVIGATION(plane, resultedPlaneSize);
+        break;
+
+    case SET_BALLAST:
+        service_Protocole_BFIO_Received_SET_BALLAST(plane, resultedPlaneSize);
+        break;
+
+    case SURFACE:
+        service_Protocole_BFIO_Received_SURFACE(plane, resultedPlaneSize);
+        break;
+
+    
+    default:
+    //wrong ID
+        Serial.println("Wrong ID from plane");
+        break;
+    }
+
 }

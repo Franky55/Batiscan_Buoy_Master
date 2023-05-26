@@ -49,7 +49,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#define WIFI_SSID "equipe11"
+#define WIFI_SSID "Batiscan"
 #define WIFI_PASSWORD "BATISCAN"
 
 
@@ -61,8 +61,8 @@
 
 /***  DÉFINITION POUR Service protocole BFIO (Function ID)  ***/
 
-#define UPDATELIGHTS 20
-#define UDPDATE_SERVOS 21
+#define UPDATE_LIGHTS 20
+#define UPDATE_SERVOS 21
 #define UPDATE_MOTORS 22
 #define UPDATE_CAMERA 23
 #define GET_ALL_STATES 24
