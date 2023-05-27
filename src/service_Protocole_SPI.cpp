@@ -11,6 +11,7 @@
 #define TRAME_SIZE 12
 
 #define START_BYTE 'M'
+#define START_BYTE_RECEIVE 'S'
 
 #define POSITION_UNION_BOOL 1
 #define POSITION_CAM_SERVO_ANGLE 2
@@ -21,10 +22,10 @@
 #define POSITION_YAW 8
 #define POSITION_SPEED 9
 #define POSITION_BATTERY 10
+#define POSITION_CHECKSUM 11
 
 
-
-int service_Protocole_SPI_Read_Data(unsigned char* plane, int* size);
+int service_Protocole_SPI_Read_Data(unsigned char* plane, unsigned char* size);
 
 
 int service_Protocole_SPI_initialise(void)
@@ -32,9 +33,14 @@ int service_Protocole_SPI_initialise(void)
     return 0;
 }
 
-int service_Protocole_SPI_Received(unsigned char* plane, int* size)
+int service_Protocole_SPI_Received(unsigned char* plane, unsigned char* size)
 {
-    if(plane[0] != START_BYTE)  //Pas de start byte
+    if((*size) < TRAME_SIZE)            //La trame n'est pas asse long
+    {
+        return -3;
+    }
+
+    if(plane[0] != START_BYTE_RECEIVE)  //Pas de start byte
     {
         return -1;
     }
@@ -53,12 +59,8 @@ int service_Protocole_SPI_Received(unsigned char* plane, int* size)
     return service_Protocole_SPI_Read_Data(plane, size); //update les valeurs
 }
 
-int service_Protocole_SPI_Read_Data(unsigned char* plane, int* size)
+int service_Protocole_SPI_Read_Data(unsigned char* plane, unsigned char* size)
 {
-    if(*size < TRAME_SIZE)
-    {
-        return -1;
-    }
     processus_Communication_Struct_ACTUAL_Value.union_Bool.All = plane[POSITION_UNION_BOOL];
     processus_Communication_Struct_ACTUAL_Value.Camera_Servo_Angle = plane[POSITION_CAM_SERVO_ANGLE];
     processus_Communication_Struct_ACTUAL_Value.Pressure = (plane[POSITION_PRESSURE+1] << 8) + plane[POSITION_PRESSURE];
@@ -74,7 +76,7 @@ int service_Protocole_SPI_Read_Data(unsigned char* plane, int* size)
 
 int service_Protocole_SPI_Pepare_Trame_Slave(unsigned char* plane, int* size)
 {
-    
+    plane[0] = START_BYTE;
     plane[POSITION_UNION_BOOL] = processus_Communication_Struct_WANTED_Value.union_Bool.All;
     plane[POSITION_CAM_SERVO_ANGLE] = processus_Communication_Struct_WANTED_Value.Camera_Servo_Angle;
     plane[POSITION_PRESSURE] = processus_Communication_Struct_WANTED_Value.Pressure;
@@ -86,6 +88,14 @@ int service_Protocole_SPI_Pepare_Trame_Slave(unsigned char* plane, int* size)
     plane[POSITION_SPEED] = processus_Communication_Struct_WANTED_Value.Speed;
     plane[POSITION_BATTERY] = processus_Communication_Struct_WANTED_Value.Battery;
 
+
+    unsigned char checkSum = 0;
+    for (int i = 0; i < (*size)-1; i++)
+    {
+        checkSum += plane[i];
+    }
+
+    plane[POSITION_CHECKSUM] = checkSum;
 
     return 0;
 }

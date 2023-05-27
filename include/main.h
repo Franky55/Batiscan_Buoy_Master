@@ -57,7 +57,7 @@
 
 
 #define GPIO10 10
-#define GPIO10_TEMPS_POUR_RESET_EN_MS 5000
+#define GPIO10_TEMPS_POUR_RESET_EN_MS 1000
 
 /***  DÉFINITION POUR Service protocole BFIO (Function ID)  ***/
 
