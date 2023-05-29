@@ -74,6 +74,13 @@ class cData
          * @return
          */
         Execution ToBytes(unsigned char value,       unsigned char* resultedByteArray, int sizeOfGivenArray);
+        /** @brief Convert a signed char to an array of bytes
+         * @param value variable to convert
+         * @param resultedByteArray array to fill with bytes
+         * @param sizeOfGivenArray size of the array to fill with bytes (Minimum: 1)
+         * @return
+         */
+        Execution ToBytes(signed char value,                unsigned char* resultedByteArray, int sizeOfGivenArray);
         /** @brief Convert a char to an array of bytes
          * @param value variable to convert
          * @param resultedByteArray array to fill with bytes

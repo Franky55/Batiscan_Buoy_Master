@@ -57,6 +57,15 @@ int service_Protocole_SPI_Received(unsigned char* plane, unsigned char* size)
         return -2;
     }
 
+    // Serial.print("SPI slave sending:\n");
+
+    // for(int i = 0; i < *size; i++)
+    // {
+    //     Serial.print(plane[i]);
+    //     Serial.print(", ");
+    // }
+    // Serial.println("\n");
+
     return service_Protocole_SPI_Read_Data(plane, size); //update les valeurs
 }
 

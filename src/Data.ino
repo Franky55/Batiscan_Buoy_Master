@@ -69,6 +69,36 @@ Execution cData::ToBytes(unsigned char value,       unsigned char* resultedByteA
 /// @param resultedByteArray array to fill with bytes
 /// @param sizeOfGivenArray size of the array to fill with bytes
 /// @return 
+Execution cData::ToBytes(signed char value,                unsigned char* resultedByteArray, int sizeOfGivenArray)
+{
+    _sizeOfByteArray = 1;
+
+    if(sizeOfGivenArray >= _sizeOfByteArray)
+    {
+        unsigned char newValue = 0;
+        if (value >= 0) {
+            // If the original char is non-negative, we can simply cast it to an unsigned char
+            newValue = static_cast<unsigned char>(value);
+        } else {
+            // If the original char is negative, we need to first cast it to an unsigned int
+            // to ensure that the sign bit is properly converted to an unsigned value
+            newValue = static_cast<unsigned char>(static_cast<unsigned int>(value));
+        }
+
+        resultedByteArray[0] = newValue;
+        return Execution::Passed;
+    }
+    else
+    {
+        return Execution::Failed;
+    }
+}
+
+/// @brief Convert a char to an array of bytes
+/// @param value variable to convert
+/// @param resultedByteArray array to fill with bytes
+/// @param sizeOfGivenArray size of the array to fill with bytes
+/// @return 
 Execution cData::ToBytes(char value,                unsigned char* resultedByteArray, int sizeOfGivenArray)
 {
     _sizeOfByteArray = 1;
@@ -93,6 +123,8 @@ Execution cData::ToBytes(char value,                unsigned char* resultedByteA
         return Execution::Failed;
     }
 }
+
+
 
 /// @brief Convert an unsigned short to an array of bytes
 /// @param value variable to convert

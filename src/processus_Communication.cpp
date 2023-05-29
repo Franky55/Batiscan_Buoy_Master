@@ -37,7 +37,7 @@ int compteur_Com_SPI = 0;
 int Processus_Communication_initialise(void)
 {
     processus_Communication_Struct_WANTED_Value.union_Bool.All = 0;
-    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Left_Light_State = 1;
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Left_Light_State = 0;
     processus_Communication_Struct_WANTED_Value.Camera_Servo_Angle = 0;
     processus_Communication_Struct_WANTED_Value.Pressure = 0;
     processus_Communication_Struct_WANTED_Value.Temperature = 0;
@@ -92,6 +92,11 @@ void Processus_Communication_Check_State_WIFI()
     }
 
     processus_WIFI.State = 1;
+    if(processus_WIFI.DataToSend == 1)
+    {
+        serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Send_WIFI;
+        return;
+    }
 
     processus_WIFI.DataToRead = interface_WIFI_Data_Available();
     if(processus_WIFI.DataToRead > 0)
@@ -101,10 +106,7 @@ void Processus_Communication_Check_State_WIFI()
         return;
     }
 
-    if(processus_WIFI.DataToSend == 1)
-    {
-        serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Send_WIFI;
-    }
+    
 
 
 }
@@ -152,7 +154,8 @@ void Processus_Communication_Send_WIFI()
     unsigned char bufferTestSend[300];
 
     service_Protocole_BFIO_Setup_Answer(processus_WIFI.fonctionID, bufferTestSend, &size);
-
+    Serial.print("FonctionID: ");
+    Serial.println(processus_WIFI.fonctionID);
     interface_WIFI_Send(bufferTestSend, size);
     processus_WIFI.DataToSend = 0;//data has been sent
     // unsigned char bufferTest[255];
@@ -207,6 +210,14 @@ void Processus_Communication_SPI()
 
 void Processus_Communication_SPI_GERE_INFORECEIVED()
 {
+    // Serial.print("SPI slave sending:\n");
+
+    // for(int i = 0; i < interface_SPI_Master_Struct.Size; i++)
+    // {
+    //     Serial.print(interface_SPI_Master_Struct.Received_SPI[i]);
+    //     Serial.print(", ");
+    // }
+    // Serial.println("\n");
     service_Protocole_SPI_Received(interface_SPI_Master_Struct.Received_SPI, &interface_SPI_Master_Struct.Size);
     serviceBaseDeTemps_execute[PROCESSUS_SPI_PHASE] = Processus_Communication_SPI;
 }

@@ -423,7 +423,7 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_STATES(unsigned short* plane, int
     unsigned short buffer_Short_IsCommunicating[2];
 
 
-    unsigned short buffer_Short_To_Send[100];
+    unsigned short buffer_Short_To_Send[200];
     
 
     int resultedPlaneSize = 100;
@@ -602,7 +602,7 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_STATES(unsigned short* plane, int
 Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, int *size)
 {   
     Execution execution;
-    unsigned char buffer_Byte_Pressure[2];
+    unsigned char buffer_Byte_Pressure[4];
     unsigned char buffer_Byte_Pitch[1];
     unsigned char buffer_Byte_Roll[1];
     unsigned char buffer_Byte_Yaw[1];
@@ -610,7 +610,7 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     unsigned char buffer_Byte_Battery[1];
 
 
-    unsigned short buffer_Short_Pressure[3];
+    unsigned short buffer_Short_Pressure[5];
     unsigned short buffer_Short_Pitch[2];
     unsigned short buffer_Short_Roll[2];
     unsigned short buffer_Short_Yaw[2];
@@ -626,39 +626,45 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Pressure, buffer_Byte_Pressure, 2);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Pressure, buffer_Byte_Pressure, 4);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("632: Error");
         return Execution::Failed;
     }
 
     execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Pitch, buffer_Byte_Pitch, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("639: Error");
         return Execution::Failed;
     }
 
     execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Roll, buffer_Byte_Roll, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("646: Error");
         return Execution::Failed;
     }
 
     execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Yaw, buffer_Byte_Yaw, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("653: Error");
         return Execution::Failed;
     }
 
     execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Speed, buffer_Byte_Speed, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("660: Error");
         return Execution::Failed;
     }
 
     execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Battery, buffer_Byte_Battery, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("667: Error");
         return Execution::Failed;
     }
 
@@ -666,38 +672,44 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     #pragma endregion
     
     #pragma region --- CONVERT TO SEGMENTS
-    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pressure, buffer_Short_Pressure, 2, 3);
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pressure, buffer_Short_Pressure, 4, 5);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("678: Error");
         return Execution::Failed;
     }
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pitch, buffer_Short_Pitch, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("684: Error");
         return Execution::Failed;
     }
 
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Roll, buffer_Short_Roll, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("691: Error");
         return Execution::Failed;
     }
 
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Yaw, buffer_Short_Yaw, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("698: Error");
         return Execution::Failed;
     }
 
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Speed, buffer_Short_Speed, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("705: Error");
         return Execution::Failed;
     }
 
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Battery, buffer_Short_Battery, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("712: Error");
         return Execution::Failed;
     }
 
@@ -705,33 +717,38 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     #pragma endregion
 
     #pragma region --- APPEND SEGMENTS
-    execution = Packet.AppendSegments(buffer_Short_Pressure, 3, buffer_Short_Pitch, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    execution = Packet.AppendSegments(buffer_Short_Pressure, 5, buffer_Short_Pitch, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("723: Error");
         return Execution::Failed;
     }
 
     execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Roll, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("730: Error");
         return Execution::Failed;
     }
 
     execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Yaw, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("737: Error");
         return Execution::Failed;
     }
 
     execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Speed, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("744: Error");
         return Execution::Failed;
     }
 
     execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Battery, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("751: Error");
         return Execution::Failed;
     }
 
@@ -742,6 +759,7 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("762: Error");
         return Execution::Failed;
     }
     #pragma endregion
@@ -783,27 +801,32 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
 
     
     #pragma region --- CONVERT TO BYTES
-    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Speed, buffer_Byte_Pressure, 2);
+    signed char sus = processus_Communication_Struct_WANTED_Value.Speed;
+    execution = Data.ToBytes(sus, buffer_Byte_Pressure, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("807: Error");
         return Execution::Failed;
     }
 
     execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Pitch, buffer_Byte_Pitch, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("814: Error");
         return Execution::Failed;
     }
 
     execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Roll, buffer_Byte_Roll, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("821: Error");
         return Execution::Failed;
     }
 
     execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Yaw, buffer_Byte_Yaw, 1);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("828: Error");
         return Execution::Failed;
     }
 
@@ -812,26 +835,30 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
     #pragma endregion
     
     #pragma region --- CONVERT TO SEGMENTS
-    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pressure, buffer_Short_Pressure, 2, 3);
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pressure, buffer_Short_Pressure, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("840: Error");
         return Execution::Failed;
     }
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pitch, buffer_Short_Pitch, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("846: Error");
         return Execution::Failed;
     }
 
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Roll, buffer_Short_Roll, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("853: Error");
         return Execution::Failed;
     }
 
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Yaw, buffer_Short_Yaw, 1, 2);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("860: Error");
         return Execution::Failed;
     }
 
@@ -839,21 +866,24 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
     #pragma endregion
 
     #pragma region --- APPEND SEGMENTS
-    execution = Packet.AppendSegments(buffer_Short_Pressure, 3, buffer_Short_Pitch, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    execution = Packet.AppendSegments(buffer_Short_Pressure, 2, buffer_Short_Pitch, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("871: Error");
         return Execution::Failed;
     }
 
     execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Roll, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("878: Error");
         return Execution::Failed;
     }
 
     execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Yaw, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("885: Error");
         return Execution::Failed;
     }
 
@@ -865,13 +895,16 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
     execution = Packet.CreateFromSegments(functionID, buffer_Short_To_Send, resultedPlaneSize, plane, 300);
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("897: Error");
         return Execution::Failed;
     }
     #pragma endregion
 
     
     resultedPlaneSize = resultedPlaneSize +2;
-    *size = resultedPlaneSize;
+    *size = resultedPlaneSize;   
+
+
     Device.SetStatus(Status::Available);
     return Execution::Passed;
 }
@@ -1203,7 +1236,7 @@ Execution service_Protocole_BFIO_Received_SET_BALLAST(unsigned short *plane, int
 Execution service_Protocole_BFIO_Received_SURFACE(unsigned short *plane, int resultedPlaneSize)
 {   
     unsigned char receivedBytes[25];
-    Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Camera state
+    Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Surface state
     if(execution != Execution::Passed)
     {
         return Execution::Failed;
