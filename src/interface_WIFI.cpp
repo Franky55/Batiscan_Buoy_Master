@@ -92,14 +92,6 @@ int interface_WIFI_Data_Available()
 bool interface_WIFI_Check_Connexion()
 {
     return true;
-    // if(client.connected())
-    // {
-    //     return true;
-    // }
-    // else
-    // {
-    //     return false;
-    // }
 }
 
 

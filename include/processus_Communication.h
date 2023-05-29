@@ -1,6 +1,10 @@
 #ifndef PROCESSUSCOMMUNICATION_H
 #define PROCESSUSCOMMUNICATION_H
 
+/**
+ * @brief Structure pour le wifi
+ * 
+ */
 typedef struct
 {
     unsigned char State;
@@ -9,7 +13,7 @@ typedef struct
     int DataToSend;
     int DataToSendSPI;
 }PROCESSUS_WIFI;
-
+ //asd
 struct BITS
 {
     unsigned char Left_Light_State:1;

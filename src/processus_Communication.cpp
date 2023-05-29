@@ -12,13 +12,17 @@
 // if udp:         https://gist.github.com/santolucito/70ecb94ce297eb1b8b8034f78683447b
 
 
-
+//ads
 void Processus_Communication_ConnexionClient();
 void Processus_Communication_Check_State();
 void Processus_Communication_Read();
 void Processus_Communication_Send();
 void Processus_Communication_SPI();
 
+/**
+ * @brief Definition des structures
+ * 
+ */
 PROCESSUS_WIFI processus_WIFI;
 PROCESSUS_COMMUNICATION processus_Communication_Struct_WANTED_Value;
 PROCESSUS_COMMUNICATION processus_Communication_Struct_ACTUAL_Value;
