@@ -30,6 +30,7 @@ int service_Protocole_SPI_Read_Data(unsigned char* plane, unsigned char* size);
 
 int service_Protocole_SPI_initialise(void)
 {
+    
     return 0;
 }
 
@@ -74,7 +75,7 @@ int service_Protocole_SPI_Read_Data(unsigned char* plane, unsigned char* size)
     return 0;
 }
 
-int service_Protocole_SPI_Pepare_Trame_Slave(unsigned char* plane, int* size)
+int service_Protocole_SPI_Pepare_Trame_Slave(unsigned char* plane, unsigned char* size)
 {
     plane[0] = START_BYTE;
     plane[POSITION_UNION_BOOL] = processus_Communication_Struct_WANTED_Value.union_Bool.All;
@@ -88,6 +89,7 @@ int service_Protocole_SPI_Pepare_Trame_Slave(unsigned char* plane, int* size)
     plane[POSITION_SPEED] = processus_Communication_Struct_WANTED_Value.Speed;
     plane[POSITION_BATTERY] = processus_Communication_Struct_WANTED_Value.Battery;
 
+    *size = TRAME_SIZE;
 
     unsigned char checkSum = 0;
     for (int i = 0; i < (*size)-1; i++)

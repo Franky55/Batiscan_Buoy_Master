@@ -124,7 +124,7 @@
  * @brief Nombre de phase de la base de temps \ref xserviceBaseDeTemps.h
  * 
  */
-#define SERVICEBASEDETEMPS_NOMBRE_DE_PHASES 4
+#define SERVICEBASEDETEMPS_NOMBRE_DE_PHASES 5
 
 
 
@@ -148,6 +148,11 @@
  * @brief Numéro de phase du processus du wifi dans la Communication
  */
 #define PROCESSUS_WIFI_PHASE 3
+
+/**
+ * @brief Numéro de phase du processus du wifi dans la Communication
+ */
+#define PROCESSUS_SPI_PHASE 4
 
 
 #define PROCESSUSCLIGNOTANT_TEMPS_ALLUME_EN_MS 1000

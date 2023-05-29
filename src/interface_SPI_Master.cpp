@@ -39,23 +39,24 @@ int interface_SPI_MASTER_Transaction(unsigned char * data, unsigned char * out, 
   
     interfaceSPI_Master.endTransaction();
     digitalWrite(INTERFACE_SPI_CS1, HIGH);  // Deselect the slave device
-    //Serial.print("Data Sending:     ");
+    Serial.print("\n\nData Sending:     ");
     
     interface_SPI_Master_Struct.Size = size;
 
     for(int i = 0; i < size; i++)
     {
         interface_SPI_Master_Struct.Transmit_SPI[i] = data[i]; 
-        //Serial.print((char)data[i]);
+        Serial.print((char)data[i]);
+        
     }
 
 
-    //Serial.print("\nData receiving:     ");
+    Serial.print("\nData receiving:     ");
 
     for(int i = 0; i < size; i++)
     {
         interface_SPI_Master_Struct.Received_SPI[i] = out[i]; 
-        //Serial.print((char)out[i]);
+        Serial.print((char)out[i]);
     }
 
     return 0;

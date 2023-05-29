@@ -11,7 +11,10 @@ typedef struct
     unsigned char tabReceived[255];
     int DataToRead;
     int DataToSend;
-    int DataToSendSPI;
+    int LengthDataReceived;
+    
+    int fonctionID;
+
 }PROCESSUS_WIFI;
  //asd
 struct BITS

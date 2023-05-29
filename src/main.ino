@@ -34,6 +34,7 @@
 #include "serviceTaskServer.h"
 #include "serviceBaseDeTemps.h"
 #include "Service_Protocole_BFIO.h"
+#include "service_Protocole_SPI.h"
 
 // Inlude des interfaces
 #include "interface_NEOPIXEL.h"
@@ -149,6 +150,7 @@ void main_initialise(void)
 
   //Service
   service_Protocole_BFIO_initialise();
+  service_Protocole_SPI_initialise();
 
   //processusClignotant_initialise();
   Processus_Communication_initialise();

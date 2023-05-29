@@ -1238,6 +1238,7 @@ void service_Protocole_BFIO_Read_Data(int *fonctionID, unsigned char* tabReceive
 
     execution = Packet.FullyAnalyze(plane, &resultedPlaneSize, &extractedParameterCount, &ucFonctionID);
 
+    *fonctionID = (int)ucFonctionID;
 
     switch (ucFonctionID)
     {
