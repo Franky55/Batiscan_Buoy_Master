@@ -624,6 +624,8 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     int resultedPlaneSize = 100;
     unsigned char functionID = GET_ALL_SENSORS;
 
+    // Serial.print("Pressure: ");
+    // Serial.println(processus_Communication_Struct_ACTUAL_Value.Pressure);
     
     #pragma region --- CONVERT TO BYTES
     execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Pressure, buffer_Byte_Pressure, 4);

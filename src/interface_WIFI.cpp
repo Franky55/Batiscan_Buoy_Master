@@ -106,14 +106,14 @@ int interface_WIFI_Read(unsigned char * packet, int length)
 
 
 
-    // Serial.print("Packet received: ");
+    Serial.print("Packet received: ");
 
-    // for(int i = 0; i < len; i++)
-    // {
-    //     Serial.print(packet[i]);
-    //     Serial.print(", ");
-    // }
-    // Serial.println("\n");
+    for(int i = 0; i < len; i++)
+    {
+        Serial.print(packet[i]);
+        Serial.print(", ");
+    }
+    Serial.println("\n");
 
     return len;
 }
@@ -141,12 +141,12 @@ int interface_WIFI_Send(unsigned char * packet, int length)
     // Serial.print(length);
     // Serial.print("\n\n");
 
-    for(int byte = 0; byte < length; byte++)
-    {
-        Serial.print(packet[byte]);
-        Serial.print(", ");
-    }
-    Serial.println("");
+    // for(int byte = 0; byte < length; byte++)
+    // {
+    //     Serial.print(packet[byte]);
+    //     Serial.print(", ");
+    // }
+    // Serial.println("");
 
     UDP.write(packet, length);
     UDP.endPacket();

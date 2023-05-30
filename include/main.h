@@ -96,7 +96,7 @@
 #define SPI_MISO 13
 #define SPI_MOSI 11
 #define SPI_CLK 12
-#define INTERFACE_SPI_CS1 10
+#define INTERFACE_SPI_CS1 2
 
 
 //Utlisation de la LED Neopixel
