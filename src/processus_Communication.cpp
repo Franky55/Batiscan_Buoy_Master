@@ -154,8 +154,8 @@ void Processus_Communication_Send_WIFI()
     unsigned char bufferTestSend[300];
 
     service_Protocole_BFIO_Setup_Answer(processus_WIFI.fonctionID, bufferTestSend, &size);
-    Serial.print("FonctionID: ");
-    Serial.println(processus_WIFI.fonctionID);
+    // Serial.print("FonctionID: ");
+    // Serial.println(processus_WIFI.fonctionID);
     interface_WIFI_Send(bufferTestSend, size);
     processus_WIFI.DataToSend = 0;//data has been sent
     // unsigned char bufferTest[255];

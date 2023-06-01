@@ -106,14 +106,14 @@ int interface_WIFI_Read(unsigned char * packet, int length)
 
 
 
-    Serial.print("Packet received: ");
+    // Serial.print("Packet received: ");
 
-    for(int i = 0; i < len; i++)
-    {
-        Serial.print(packet[i]);
-        Serial.print(", ");
-    }
-    Serial.println("\n");
+    // for(int i = 0; i < len; i++)
+    // {
+    //     Serial.print(packet[i]);
+    //     Serial.print(", ");
+    // }
+    // Serial.println("\n");
 
     return len;
 }

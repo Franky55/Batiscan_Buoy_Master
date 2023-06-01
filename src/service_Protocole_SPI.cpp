@@ -75,12 +75,12 @@ int service_Protocole_SPI_Read_Data(unsigned char* plane, unsigned char* size)
 {
     processus_Communication_Struct_ACTUAL_Value.union_Bool.All = plane[POSITION_UNION_BOOL];
     processus_Communication_Struct_ACTUAL_Value.Camera_Servo_Angle = plane[POSITION_CAM_SERVO_ANGLE];
-    processus_Communication_Struct_ACTUAL_Value.Pressure = ((plane[POSITION_PRESSURE+1] << 8) + plane[POSITION_PRESSURE]) * PRESSION_PASCAL;
-    processus_Communication_Struct_ACTUAL_Value.Temperature = plane[POSITION_TEMPERATURE];
-    processus_Communication_Struct_ACTUAL_Value.Pitch = plane[POSITION_PITCH];
-    processus_Communication_Struct_ACTUAL_Value.Roll = plane[POSITION_ROLL];
-    processus_Communication_Struct_ACTUAL_Value.Yaw = plane[POSITION_YAW];
-    processus_Communication_Struct_ACTUAL_Value.Speed = plane[POSITION_SPEED];
+    processus_Communication_Struct_ACTUAL_Value.Pressure = (int)((plane[POSITION_PRESSURE+1] << 8) + plane[POSITION_PRESSURE]) * PRESSION_PASCAL;
+    processus_Communication_Struct_ACTUAL_Value.Temperature = (signed char)plane[POSITION_TEMPERATURE];
+    processus_Communication_Struct_ACTUAL_Value.Pitch = (signed char)plane[POSITION_PITCH];
+    processus_Communication_Struct_ACTUAL_Value.Roll = (signed char)plane[POSITION_ROLL];
+    processus_Communication_Struct_ACTUAL_Value.Yaw = (signed char)plane[POSITION_YAW];
+    processus_Communication_Struct_ACTUAL_Value.Speed = (signed char)plane[POSITION_SPEED];
     processus_Communication_Struct_ACTUAL_Value.Battery = plane[POSITION_BATTERY];
 
     

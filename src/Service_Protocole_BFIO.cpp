@@ -603,6 +603,7 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
 {   
     Execution execution;
     unsigned char buffer_Byte_Pressure[4];
+    unsigned char buffer_Byte_Temperature[1];
     unsigned char buffer_Byte_Pitch[1];
     unsigned char buffer_Byte_Roll[1];
     unsigned char buffer_Byte_Yaw[1];
@@ -611,6 +612,7 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
 
 
     unsigned short buffer_Short_Pressure[5];
+    unsigned short buffer_Short_Temperature[2];
     unsigned short buffer_Short_Pitch[2];
     unsigned short buffer_Short_Roll[2];
     unsigned short buffer_Short_Yaw[2];
@@ -624,6 +626,8 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     int resultedPlaneSize = 100;
     unsigned char functionID = GET_ALL_SENSORS;
 
+    Serial.print("Temperature: ");
+    Serial.println(processus_Communication_Struct_ACTUAL_Value.Temperature);
     // Serial.print("Pressure: ");
     // Serial.println(processus_Communication_Struct_ACTUAL_Value.Pressure);
     
@@ -632,6 +636,13 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     if(execution != Execution::Passed)
     {
         Device.SetErrorMessage("632: Error");
+        return Execution::Failed;
+    }
+
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Temperature, buffer_Byte_Temperature, 1);
+    if(execution != Execution::Passed)
+    {
+        Device.SetErrorMessage("643: Error");
         return Execution::Failed;
     }
 
@@ -680,6 +691,14 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
         Device.SetErrorMessage("678: Error");
         return Execution::Failed;
     }
+
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Temperature, buffer_Short_Temperature, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        Device.SetErrorMessage("696: Error");
+        return Execution::Failed;
+    }
+
     execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Pitch, buffer_Short_Pitch, 1, 2);
     if(execution != Execution::Passed)
     {
@@ -719,10 +738,17 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     #pragma endregion
 
     #pragma region --- APPEND SEGMENTS
-    execution = Packet.AppendSegments(buffer_Short_Pressure, 5, buffer_Short_Pitch, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    execution = Packet.AppendSegments(buffer_Short_Pressure, 5, buffer_Short_Temperature, 2, buffer_Short_To_Send, &resultedPlaneSize);
     if(execution != Execution::Passed)
     {
         Device.SetErrorMessage("723: Error");
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Pitch, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        Device.SetErrorMessage("730: Error");
         return Execution::Failed;
     }
 
@@ -1188,34 +1214,38 @@ Execution service_Protocole_BFIO_Received_UPDATE_NAVIGATION(unsigned short *plan
     Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Speed
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("1191: ERROR SPEED");
         return Execution::Failed;
     }
-    processus_Communication_Struct_WANTED_Value.Speed = receivedBytes[0];
+    processus_Communication_Struct_WANTED_Value.Speed = (signed char)receivedBytes[0];
     memset(receivedBytes, 0, 25);
 
 
     execution = Packet.GetBytes(plane, resultedPlaneSize, 2, receivedBytes, 25);//Get Pitch
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("1201: ERROR PITCH");
         return Execution::Failed;
     }
-    processus_Communication_Struct_WANTED_Value.Pitch = receivedBytes[0];
+    processus_Communication_Struct_WANTED_Value.Pitch = (signed char)receivedBytes[0];
     memset(receivedBytes, 0, 25);
 
     execution = Packet.GetBytes(plane, resultedPlaneSize, 3, receivedBytes, 25);//Get Roll
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("1210: ERROR ROLL");
         return Execution::Failed;
     }
-    processus_Communication_Struct_WANTED_Value.Roll = receivedBytes[0];
+    processus_Communication_Struct_WANTED_Value.Roll = (signed char)receivedBytes[0];
     memset(receivedBytes, 0, 25);
 
     execution = Packet.GetBytes(plane, resultedPlaneSize, 4, receivedBytes, 25);//Get Yaw
     if(execution != Execution::Passed)
     {
+        Device.SetErrorMessage("1219: ERROR YAW");
         return Execution::Failed;
     }
-    processus_Communication_Struct_WANTED_Value.Yaw = receivedBytes[0];
+    processus_Communication_Struct_WANTED_Value.Yaw = (signed char)receivedBytes[0];
     memset(receivedBytes, 0, 25);
     return Execution::Passed;
 }
@@ -1269,6 +1299,18 @@ void service_Protocole_BFIO_Read_Data(int *fonctionID, unsigned char* tabReceive
     if(execution != Execution::Passed)
     {
         return;
+    }
+
+    if(ucFonctionID == 26)
+    {
+        Serial.print("Packet received: ");
+
+        for(int i = 0; i < (*size); i++)
+        {
+            Serial.print(plane[i]);
+            Serial.print(", ");
+        }
+        Serial.println("\n");
     }
 
     execution = Packet.FullyAnalyze(plane, &resultedPlaneSize, &extractedParameterCount, &ucFonctionID);
