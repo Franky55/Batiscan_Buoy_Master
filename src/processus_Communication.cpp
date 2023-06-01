@@ -154,6 +154,19 @@ void Processus_Communication_Send_WIFI()
     unsigned char bufferTestSend[300];
 
     service_Protocole_BFIO_Setup_Answer(processus_WIFI.fonctionID, bufferTestSend, &size);
+
+    if(processus_WIFI.fonctionID == 26)
+    {
+        Serial.println("######");
+    }
+    if(processus_WIFI.fonctionID == 23)
+    {
+        Serial.println("CCCCC");
+    }
+    else
+    {
+        Serial.println("......");
+    }
     // Serial.print("FonctionID: ");
     // Serial.println(processus_WIFI.fonctionID);
     interface_WIFI_Send(bufferTestSend, size);

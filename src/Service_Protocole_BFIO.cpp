@@ -626,8 +626,8 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_SENSORS(unsigned short* plane, in
     int resultedPlaneSize = 100;
     unsigned char functionID = GET_ALL_SENSORS;
 
-    Serial.print("Temperature: ");
-    Serial.println(processus_Communication_Struct_ACTUAL_Value.Temperature);
+    // Serial.print("Temperature: ");
+    // Serial.println(processus_Communication_Struct_ACTUAL_Value.Temperature);
     // Serial.print("Pressure: ");
     // Serial.println(processus_Communication_Struct_ACTUAL_Value.Pressure);
     
@@ -813,12 +813,14 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
     unsigned char buffer_Byte_Pitch[1];
     unsigned char buffer_Byte_Roll[1];
     unsigned char buffer_Byte_Yaw[1];
+    unsigned char buffer_Byte_Cam_Angle[1];
 
 
     unsigned short buffer_Short_Pressure[2];
     unsigned short buffer_Short_Pitch[2];
     unsigned short buffer_Short_Roll[2];
     unsigned short buffer_Short_Yaw[2];
+    unsigned short buffer_Short_Cam_Angle[2];
 
 
     unsigned short buffer_Short_To_Send[150];
@@ -858,6 +860,13 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
         return Execution::Failed;
     }
 
+    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Camera_Servo_Angle, buffer_Byte_Cam_Angle, 1);
+    if(execution != Execution::Passed)
+    {
+        Device.SetErrorMessage("828: Error");
+        return Execution::Failed;
+    }
+
 
     
     #pragma endregion
@@ -890,6 +899,13 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
         return Execution::Failed;
     }
 
+    execution = Packet.GetParameterSegmentFromBytes(buffer_Byte_Cam_Angle, buffer_Short_Cam_Angle, 1, 2);
+    if(execution != Execution::Passed)
+    {
+        Device.SetErrorMessage("905: Error");
+        return Execution::Failed;
+    }
+
     
     #pragma endregion
 
@@ -912,6 +928,13 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
     if(execution != Execution::Passed)
     {
         Device.SetErrorMessage("885: Error");
+        return Execution::Failed;
+    }
+
+    execution = Packet.AppendSegments(buffer_Short_To_Send, resultedPlaneSize, buffer_Short_Cam_Angle, 2, buffer_Short_To_Send, &resultedPlaneSize);
+    if(execution != Execution::Passed)
+    {
+        Device.SetErrorMessage("937: Error");
         return Execution::Failed;
     }
 
@@ -1247,6 +1270,15 @@ Execution service_Protocole_BFIO_Received_UPDATE_NAVIGATION(unsigned short *plan
     }
     processus_Communication_Struct_WANTED_Value.Yaw = (signed char)receivedBytes[0];
     memset(receivedBytes, 0, 25);
+
+    execution = Packet.GetBytes(plane, resultedPlaneSize, 5, receivedBytes, 25);//Get Yaw
+    if(execution != Execution::Passed)
+    {
+        Device.SetErrorMessage("1219: ERROR CAM ANGLE");
+        return Execution::Failed;
+    }
+    processus_Communication_Struct_WANTED_Value.Camera_Servo_Angle = (signed char)receivedBytes[0];
+    memset(receivedBytes, 0, 25);
     return Execution::Passed;
 }
 
@@ -1301,17 +1333,16 @@ void service_Protocole_BFIO_Read_Data(int *fonctionID, unsigned char* tabReceive
         return;
     }
 
-    if(ucFonctionID == 26)
-    {
-        Serial.print("Packet received: ");
+    
+        // Serial.print("Packet received: ");
 
-        for(int i = 0; i < (*size); i++)
-        {
-            Serial.print(plane[i]);
-            Serial.print(", ");
-        }
-        Serial.println("\n");
-    }
+        // for(int i = 0; i < (*size); i++)
+        // {
+        //     Serial.print(plane[i]);
+        //     Serial.print(", ");
+        // }
+        // Serial.println("\n");
+    
 
     execution = Packet.FullyAnalyze(plane, &resultedPlaneSize, &extractedParameterCount, &ucFonctionID);
 

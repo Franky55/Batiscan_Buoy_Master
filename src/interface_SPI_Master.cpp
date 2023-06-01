@@ -28,7 +28,7 @@ int interface_SPI_MASTER_Transaction(unsigned char * data, unsigned char * out, 
 {
     digitalWrite(INTERFACE_SPI_CS1, LOW);  // Select the slave device
     interfaceSPI_Master.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
-
+    delayMicroseconds(10);
 
   // Send each character of the command string
 //   for (size_t i = 0; i < size; i++) {
