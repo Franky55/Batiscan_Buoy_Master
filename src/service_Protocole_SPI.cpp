@@ -83,6 +83,15 @@ int service_Protocole_SPI_Read_Data(unsigned char* plane, unsigned char* size)
     processus_Communication_Struct_ACTUAL_Value.Speed = (signed char)plane[POSITION_SPEED];
     processus_Communication_Struct_ACTUAL_Value.Battery = plane[POSITION_BATTERY];
 
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Surfacing = processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Surfacing;
+    if(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.In_Emergency == 1)
+    {
+        interface_NEOPIXEL_allume(50, 0, 0);
+    }
+    else
+    {
+        interface_NEOPIXEL_allume(0, 50, 0);
+    }
     
 
     return 0;

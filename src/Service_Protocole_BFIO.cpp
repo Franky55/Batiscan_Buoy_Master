@@ -87,7 +87,7 @@ Execution service_Protocole_BFIO_Setup_Universal_Answer(unsigned short* plane, i
     unsigned long long BFIO_Version = 1;
     unsigned char type = 69;
     unsigned char ucStatus = status;/////////////////////////////////////////////////////
-    std::string GitRepo = "https://github.com/Franky55/Batiscan_Buoy_Master";
+    std::string GitRepo = "https://github.com/LyamBRS/Batiscan.git";
     std::string DeviceName = "Batiscan";
     std::string DeviceVersion = "Rev A";
     
@@ -429,6 +429,8 @@ Execution service_Protocole_BFIO_Setup_GET_ALL_STATES(unsigned short* plane, int
     int resultedPlaneSize = 100;
     unsigned char functionID = GET_ALL_STATES;
 
+    Serial.print("IN emergency: ");
+    Serial.println(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.In_Emergency);
     
     #pragma region --- CONVERT TO BYTES
     execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Water_Detection, buffer_Byte_Water_Detected, 1);
@@ -839,28 +841,28 @@ Execution service_Protocole_BFIO_Setup_UPDATE_NAVIGATION(unsigned short* plane, 
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Pitch, buffer_Byte_Pitch, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Pitch, buffer_Byte_Pitch, 1);
     if(execution != Execution::Passed)
     {
         Device.SetErrorMessage("814: Error");
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Roll, buffer_Byte_Roll, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Roll, buffer_Byte_Roll, 1);
     if(execution != Execution::Passed)
     {
         Device.SetErrorMessage("821: Error");
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Yaw, buffer_Byte_Yaw, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Yaw, buffer_Byte_Yaw, 1);
     if(execution != Execution::Passed)
     {
         Device.SetErrorMessage("828: Error");
         return Execution::Failed;
     }
 
-    execution = Data.ToBytes(processus_Communication_Struct_WANTED_Value.Camera_Servo_Angle, buffer_Byte_Cam_Angle, 1);
+    execution = Data.ToBytes(processus_Communication_Struct_ACTUAL_Value.Camera_Servo_Angle, buffer_Byte_Cam_Angle, 1);
     if(execution != Execution::Passed)
     {
         Device.SetErrorMessage("828: Error");
@@ -1299,15 +1301,7 @@ Execution service_Protocole_BFIO_Received_SET_BALLAST(unsigned short *plane, int
 
 Execution service_Protocole_BFIO_Received_SURFACE(unsigned short *plane, int resultedPlaneSize)
 {   
-    unsigned char receivedBytes[25];
-    Execution execution = Packet.GetBytes(plane, resultedPlaneSize, 1, receivedBytes, 25);//Get Surface state
-    if(execution != Execution::Passed)
-    {
-        return Execution::Failed;
-    }
-    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Surfacing = receivedBytes[0];
-    memset(receivedBytes, 0, 25);
-
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.Surfacing = 1;
     return Execution::Passed;
 }
 
