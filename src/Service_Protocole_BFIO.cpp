@@ -1391,5 +1391,5 @@ void service_Protocole_BFIO_Read_Data(int *fonctionID, unsigned char* tabReceive
         Serial.println("Wrong ID from plane");
         break;
     }
-
+    processus_Communication_Struct_WANTED_Value.union_Bool.bits.In_Emergency = 0;
 }

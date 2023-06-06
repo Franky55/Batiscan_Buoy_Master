@@ -32,6 +32,7 @@ PROCESSUS_COMMUNICATION processus_Communication_Struct_ACTUAL_Value;
 
 int compt = 0;
 int compteur_Com_SPI = 0;
+int compt_Since_Last_Trame = 0;
 
 
 int Processus_Communication_initialise(void)
@@ -52,6 +53,7 @@ int Processus_Communication_initialise(void)
     processus_WIFI.State = 0;
     processus_WIFI.DataToRead = 0;
     processus_WIFI.DataToSend = 0;
+    compt_Since_Last_Trame = 0;
     interface_NEOPIXEL_allume(0, 0, 100);
     serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Check_State_WIFI;
     serviceBaseDeTemps_execute[PROCESSUS_SPI_PHASE] = Processus_Communication_SPI;
@@ -98,9 +100,34 @@ void Processus_Communication_Check_State_WIFI()
         return;
     }
 
+    Serial.print("compt_Since_Last_Trame: ");
+    Serial.println(compt_Since_Last_Trame);
+    compt_Since_Last_Trame++;
+    if(compt_Since_Last_Trame == 1000)    // 100 ms
+    {
+        processus_Communication_Struct_WANTED_Value.Is_Communicating = 0;
+        processus_Communication_Struct_WANTED_Value.Pitch = 0;
+        processus_Communication_Struct_WANTED_Value.Roll = 0;
+        processus_Communication_Struct_WANTED_Value.Yaw = 0;
+        processus_Communication_Struct_WANTED_Value.Speed = 0;
+        
+    }
+    if(compt_Since_Last_Trame >= 5000)   // 2000 ms
+    {
+        processus_Communication_Struct_WANTED_Value.Is_Communicating = 0;
+        processus_Communication_Struct_WANTED_Value.Pitch = 0;
+        processus_Communication_Struct_WANTED_Value.Roll = 0;
+        processus_Communication_Struct_WANTED_Value.Yaw = 0;
+        processus_Communication_Struct_WANTED_Value.Speed = 0;
+        processus_Communication_Struct_WANTED_Value.union_Bool.bits.Camera_State = 0;
+
+        processus_Communication_Struct_WANTED_Value.union_Bool.bits.In_Emergency = 1;
+    }
+
     processus_WIFI.DataToRead = interface_WIFI_Data_Available();
     if(processus_WIFI.DataToRead > 0)
     {
+        compt_Since_Last_Trame = 0;
         serviceBaseDeTemps_execute[PROCESSUS_WIFI_PHASE] = Processus_Communication_Read_WIFI;
         processus_WIFI.DataToSend = 1;
         return;

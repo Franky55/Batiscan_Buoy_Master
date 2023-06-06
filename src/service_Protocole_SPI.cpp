@@ -86,11 +86,11 @@ int service_Protocole_SPI_Read_Data(unsigned char* plane, unsigned char* size)
     processus_Communication_Struct_WANTED_Value.union_Bool.bits.Surfacing = processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.Surfacing;
     if(processus_Communication_Struct_ACTUAL_Value.union_Bool.bits.In_Emergency == 1)
     {
-        interface_NEOPIXEL_allume(50, 0, 0);
+        //interface_NEOPIXEL_allume(50, 0, 0);
     }
     else
     {
-        interface_NEOPIXEL_allume(0, 50, 0);
+        //interface_NEOPIXEL_allume(0, 50, 0);
     }
     
 
@@ -99,6 +99,7 @@ int service_Protocole_SPI_Read_Data(unsigned char* plane, unsigned char* size)
 
 int service_Protocole_SPI_Pepare_Trame_Slave(unsigned char* plane, unsigned char* size)
 {
+    
     plane[0] = START_BYTE;
     plane[POSITION_UNION_BOOL] = processus_Communication_Struct_WANTED_Value.union_Bool.All;
     plane[POSITION_CAM_SERVO_ANGLE] = processus_Communication_Struct_WANTED_Value.Camera_Servo_Angle;
@@ -118,6 +119,16 @@ int service_Protocole_SPI_Pepare_Trame_Slave(unsigned char* plane, unsigned char
     {
         checkSum += plane[i];
     }
+
+    if(processus_Communication_Struct_WANTED_Value.union_Bool.bits.Ballast_State == 1)
+    {
+        interface_NEOPIXEL_allume(0, 0, 50);
+    }
+    else
+    {
+        interface_NEOPIXEL_allume(0, 50, 0);
+    }
+
 
     plane[POSITION_CHECKSUM] = checkSum;
 
